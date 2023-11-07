@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import io.github.casl0.filemonitor.service.FileMonitoringService
+import io.github.casl0.filemonitor.service.FileObserverEvent
 import io.github.casl0.filemonitor.ui.theme.FileMonitorTheme
 
 class MainActivity : ComponentActivity() {
@@ -71,7 +72,7 @@ class MainActivity : ComponentActivity() {
     }
 
     /** ファイル変更コールバック */
-    private fun onFileChange(event: Int, path: String?) {
+    private fun onFileChange(event: FileObserverEvent, path: String?) {
         Log.i(TAG, "onFileChange, $event, $path")
     }
 

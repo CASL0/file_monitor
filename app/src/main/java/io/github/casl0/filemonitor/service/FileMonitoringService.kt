@@ -53,18 +53,26 @@ class FileMonitoringService : Service() {
 
     /** 監視開始 */
     @Suppress("DEPRECATION")
-    fun start(file: File, onFileChange: (Int, String?) -> Unit) {
+    fun start(file: File, onFileChange: (FileObserverEvent, String?) -> Unit) {
         Log.d(TAG, "START MONITORING")
         fileObserver = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             object : FileObserver(file) {
                 override fun onEvent(event: Int, path: String?) {
-                    onFileChange(event, path)
+                    try {
+                        onFileChange(event.toFileObserverEvent(), path)
+                    } catch (e: NoSuchElementException) {
+                        Log.d(TAG, "UNKNOWN EVENT: $event")
+                    }
                 }
             }
         } else {
             object : FileObserver(file.absolutePath) {
                 override fun onEvent(event: Int, path: String?) {
-                    onFileChange(event, path)
+                    try {
+                        onFileChange(event.toFileObserverEvent(), path)
+                    } catch (e: NoSuchElementException) {
+                        Log.d(TAG, "UNKNOWN EVENT: $event")
+                    }
                 }
             }
         }.also {
@@ -123,6 +131,36 @@ class FileMonitoringService : Service() {
         )
     }
     //endregion
+}
+
+/** [FileObserver]の定数のenum class */
+enum class FileObserverEvent(val rawValue: Int) {
+    ACCESS(rawValue = FileObserver.ACCESS),
+    ALL_EVENTS(rawValue = FileObserver.ALL_EVENTS),
+    ATTRIB(rawValue = FileObserver.ATTRIB),
+    CLOSE_NOWRITE(rawValue = FileObserver.CLOSE_NOWRITE),
+    CLOSE_WRITE(rawValue = FileObserver.CLOSE_WRITE),
+    CREATE(rawValue = FileObserver.CREATE),
+    DELETE(rawValue = FileObserver.DELETE),
+    DELETE_SELF(rawValue = FileObserver.DELETE_SELF),
+    MODIFY(rawValue = FileObserver.MODIFY),
+    MOVED_FROM(rawValue = FileObserver.MOVED_FROM),
+    MOVED_TO(rawValue = FileObserver.MOVED_TO),
+    MOVE_SELF(rawValue = FileObserver.MOVE_SELF),
+    OPEN(rawValue = FileObserver.OPEN),
+}
+
+private val fileObserverEvent = FileObserverEvent.values().toList()
+
+/**
+ * 生のIntを[FileObserverEvent]に変換します
+ *
+ * @return 変換後の値
+ * @throws [NoSuchElementException]
+ */
+@Throws(NoSuchElementException::class)
+private fun Int.toFileObserverEvent(): FileObserverEvent {
+    return fileObserverEvent.first { it.rawValue == this }
 }
 
 private const val TAG = "FileMonitoringService"
