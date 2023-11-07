@@ -43,6 +43,14 @@ class FileMonitoringService : Service() {
     /** ファイル監視用インスタンス */
     private var fileObserver: FileObserver? = null
 
+    /** 監視中のファイル */
+    var monitoredFile: File? = null
+        private set
+
+    /** 監視中であるか */
+    val monitoringNow: Boolean
+        get() = monitoredFile != null
+
     /** 監視開始 */
     @Suppress("DEPRECATION")
     fun start(file: File, onFileChange: (Int, String?) -> Unit) {
@@ -64,6 +72,7 @@ class FileMonitoringService : Service() {
             fileObserver?.stopWatching()
         }
         updateForegroundService(getString(R.string.file_monitor_enabled))
+        monitoredFile = file
     }
 
     /** ファイル監視終了 */
@@ -71,6 +80,7 @@ class FileMonitoringService : Service() {
         Log.d(TAG, "STOP MONITORING")
         fileObserver?.stopWatching()
         updateForegroundService(getString(R.string.file_monitor_disabled))
+        monitoredFile = null
     }
 
     //region android.app.Service
