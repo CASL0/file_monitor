@@ -17,22 +17,38 @@
 package io.github.casl0.filemonitor.ui.home
 
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import io.github.casl0.filemonitor.MainViewModel
 import io.github.casl0.filemonitor.R
 import io.github.casl0.filemonitor.ui.theme.FileMonitorTheme
 
+/** ホーム画面 */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun HomeScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
+    val uiState by viewModel.uiState.collectAsState()
+    Scaffold(modifier = modifier, topBar = {
+        AppBar(checked = uiState.monitoringNow, onCheckedChange = viewModel::enableMonitoring)
+    }) {
+        LazyColumn(contentPadding = it) {}
+    }
+}
 
 /** TopAppBar */
 @OptIn(ExperimentalMaterial3Api::class)
