@@ -7,6 +7,7 @@ import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -48,7 +49,7 @@ class MainActivity : ComponentActivity() {
 
     /** ファイル変更コールバック */
     private fun onFileChange(event: FileObserverEvent, path: String?) {
-        Log.i(TAG, "onFileChange, $event, $path")
+        Toast.makeText(this, "$event -- $path", Toast.LENGTH_SHORT).show()
     }
 
     /** ファイル監視サービスに接続します */
