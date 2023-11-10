@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
             viewModel.uiState.collect {
                 if (it.monitoringNow) {
                     fileMonitoringService?.start(
-                        applicationContext.filesDir,
+                        it.monitoredDir,
                         this@MainActivity::onFileChange,
                     )
                 } else {

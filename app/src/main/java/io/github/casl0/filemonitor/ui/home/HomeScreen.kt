@@ -16,9 +16,12 @@
 
 package io.github.casl0.filemonitor.ui.home
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -27,6 +30,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -34,6 +38,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import io.github.casl0.filemonitor.MainViewModel
 import io.github.casl0.filemonitor.R
 import io.github.casl0.filemonitor.ui.theme.FileMonitorTheme
@@ -46,7 +51,26 @@ internal fun HomeScreen(viewModel: MainViewModel, modifier: Modifier = Modifier)
     Scaffold(modifier = modifier, topBar = {
         AppBar(checked = uiState.monitoringNow, onCheckedChange = viewModel::enableMonitoring)
     }) {
-        LazyColumn(contentPadding = it) {}
+        Column(modifier = Modifier.padding(it)) {
+            TextField(
+                modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp),
+                value = uiState.monitoredDir.absolutePath,
+                onValueChange = viewModel::onMonitoredDirChange,
+                readOnly = uiState.monitoringNow,
+                label = { Text(text = stringResource(R.string.monitored)) },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.Folder,
+                        contentDescription = stringResource(
+                            R.string.directory
+                        )
+                    )
+                },
+                singleLine = true,
+            )
+        }
     }
 }
 

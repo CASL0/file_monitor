@@ -3,4 +3,6 @@
     <string name="file_monitoring_channel_name">File Monitor</string>
     <string name="file_monitor_disabled">File Monitor - Disabled</string>
     <string name="file_monitor_enabled">File Monitor - Enabled</string>
+    <string name="monitored">Monitored</string>
+    <string name="directory">Directory</string>
 </resources>
