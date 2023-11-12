@@ -1,21 +1,26 @@
 package io.github.casl0.filemonitor
 
+import android.Manifest
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import io.github.casl0.filemonitor.service.FileMonitoringService
 import io.github.casl0.filemonitor.service.FileObserverEvent
 import io.github.casl0.filemonitor.ui.home.HomeScreen
 import io.github.casl0.filemonitor.ui.theme.FileMonitorTheme
+import io.github.casl0.filemonitor.utils.PermissionResult
+import io.github.casl0.filemonitor.utils.askPermissions
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -25,6 +30,16 @@ class MainActivity : ComponentActivity() {
     /** ViewModel */
     private val viewModel: MainViewModel by viewModels()
 
+    /** パーミッションの要求 */
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions(),
+    ) {
+        if (it.values.any { isGranted -> !isGranted }) {
+            TODO("implement")
+        }
+    }
+
+    //region android.app.Activity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         connectService()
@@ -47,6 +62,36 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        val permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            listOf(
+                Manifest.permission.READ_MEDIA_IMAGES,
+                Manifest.permission.READ_MEDIA_VIDEO,
+                Manifest.permission.READ_MEDIA_AUDIO,
+            )
+        } else {
+            listOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+        }
+        when (askPermissions(permissions)) {
+            PermissionResult.GRANTED                                  -> {
+                Log.d(TAG, "Permission granted: $permissions")
+            }
+
+            PermissionResult.SHOULD_SHOW_REQUEST_PERMISSION_RATIONALE -> {
+                TODO("implement")
+            }
+
+            PermissionResult.NOT_GRANTED                              -> {
+                requestPermissionLauncher.launch(permissions.toTypedArray())
+            }
+        }
+    }
+    //endregion
+
+    //region Private Methods
     /** ファイル変更コールバック */
     private fun onFileChange(event: FileObserverEvent, path: String?) {
         Toast.makeText(this, "$event -- $path", Toast.LENGTH_SHORT).show()
@@ -73,6 +118,7 @@ class MainActivity : ComponentActivity() {
             )
         }
     }
+    //endregion
 }
 
 private const val TAG = "MainActivity"
