@@ -124,7 +124,7 @@ class FileMonitoringService : Service() {
         startForeground(
             NOTIFICATION_ID,
             NotificationCompat.Builder(this, CHANNEL_ID)
-                    .setSmallIcon(R.drawable.ic_launcher_foreground)
+                    .setSmallIcon(R.mipmap.ic_launcher)
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setContentText(message)
                     .build(),
