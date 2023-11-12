@@ -29,6 +29,8 @@ internal data class MainUiState(
     val monitoringNow: Boolean = false,
     /** 監視対象のディレクトリ */
     val monitoredDir: String = "/",
+    /** パーミッションの説明表示中 */
+    val permissionRationale: Boolean = false,
 )
 
 /** MainActivityのビジネスロジックを扱う */
@@ -57,5 +59,14 @@ internal class MainViewModel : ViewModel() {
      */
     fun onMonitoredDirChange(newValue: String) {
         _uiState.update { it.copy(monitoredDir = newValue) }
+    }
+
+    /**
+     * パーミッション説明を表示
+     *
+     * @param enable 表示する場合true、それ以外はfalse
+     */
+    fun showPermissionRationale(enable: Boolean) {
+        _uiState.update { it.copy(permissionRationale = enable) }
     }
 }

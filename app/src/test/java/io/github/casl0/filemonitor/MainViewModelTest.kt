@@ -52,4 +52,14 @@ class MainViewModelTest {
         viewModel.onMonitoredDirChange("/sdcard")
         assertThat(viewModel.uiState.first().monitoredDir, `is`("/sdcard"))
     }
+
+    @Test
+    fun showPermissionRationale() = runTest {
+        val viewModel = MainViewModel()
+
+        assertThat(viewModel.uiState.first().permissionRationale, `is`(false))
+
+        viewModel.showPermissionRationale(true)
+        assertThat(viewModel.uiState.first().permissionRationale, `is`(true))
+    }
 }
