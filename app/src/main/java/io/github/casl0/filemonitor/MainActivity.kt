@@ -35,8 +35,9 @@ class MainActivity : ComponentActivity() {
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions(),
     ) {
+        Log.d(TAG, "Permission Result: $it")
         if (it.values.any { isGranted -> !isGranted }) {
-            TODO("implement")
+            viewModel.showPermissionRationale(true)
         }
     }
 
@@ -82,7 +83,7 @@ class MainActivity : ComponentActivity() {
             }
 
             PermissionResult.SHOULD_SHOW_REQUEST_PERMISSION_RATIONALE -> {
-                TODO("implement")
+                viewModel.showPermissionRationale(true)
             }
 
             PermissionResult.NOT_GRANTED                              -> {

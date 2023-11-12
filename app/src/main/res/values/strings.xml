@@ -5,4 +5,6 @@
     <string name="file_monitor_enabled">File Monitor - Enabled</string>
     <string name="monitored">Monitored</string>
     <string name="directory">Directory</string>
+    <string name="permission_rationale">Media permissions are needed</string>
+    <string name="setting">SETTING</string>
 </resources>

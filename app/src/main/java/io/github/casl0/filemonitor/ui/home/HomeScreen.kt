@@ -16,6 +16,9 @@
 
 package io.github.casl0.filemonitor.ui.home
 
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -27,15 +30,22 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,11 +56,50 @@ import io.github.casl0.filemonitor.ui.theme.FileMonitorTheme
 /** ホーム画面 */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun HomeScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
+internal fun HomeScreen(
+    viewModel: MainViewModel,
+    modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
+) {
     val uiState by viewModel.uiState.collectAsState()
-    Scaffold(modifier = modifier, topBar = {
-        AppBar(checked = uiState.monitoringNow, onCheckedChange = viewModel::enableMonitoring)
-    }) {
+    val context = LocalContext.current
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            AppBar(
+                checked = uiState.monitoringNow,
+                onCheckedChange = viewModel::enableMonitoring,
+            )
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+    ) {
+        if (uiState.permissionRationale) {
+            val (message, label) = stringResource(
+                id = R.string.permission_rationale
+            ) to stringResource(R.string.setting)
+            LaunchedEffect(key1 = snackbarHostState) {
+                val result = snackbarHostState.showSnackbar(
+                    message,
+                    label,
+                    withDismissAction = false,
+                    duration = SnackbarDuration.Indefinite
+                )
+                when (result) {
+                    SnackbarResult.Dismissed -> TODO()
+                    SnackbarResult.ActionPerformed -> {
+                        Intent(
+                            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                            Uri.parse("package:${context.packageName}")
+                        ).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                        }.run {
+                            context.startActivity(this)
+                        }
+                        viewModel.showPermissionRationale(false)
+                    }
+                }
+            }
+        }
         Column(modifier = Modifier.padding(it)) {
             TextField(
                 modifier = Modifier
