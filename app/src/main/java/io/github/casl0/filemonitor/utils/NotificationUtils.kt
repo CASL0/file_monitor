@@ -16,9 +16,15 @@
 
 package io.github.casl0.filemonitor.utils
 
+import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.Context
 import android.os.Build
+import androidx.annotation.RequiresPermission
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import io.github.casl0.filemonitor.R
 
 /** 通知チャネルを作成します */
 internal fun NotificationManager.makeNotificationChannel(
@@ -33,4 +39,29 @@ internal fun NotificationManager.makeNotificationChannel(
         )
         createNotificationChannel(notificationChannel)
     }
+}
+
+/**
+ * 通知を作成します
+ *
+ * @param channelId 通知チャネル
+ * @param notificationId 通知ID
+ * @param title タイトル
+ * @param message メッセージ
+ */
+@RequiresPermission(value = Manifest.permission.POST_NOTIFICATIONS)
+internal fun Context.makeNotification(
+    channelId: CharSequence,
+    notificationId: Int,
+    title: CharSequence,
+    message: CharSequence,
+) {
+    val builder = NotificationCompat.Builder(this, channelId.toString())
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setVibrate(LongArray(0))
+
+    NotificationManagerCompat.from(this).notify(notificationId, builder.build())
 }
