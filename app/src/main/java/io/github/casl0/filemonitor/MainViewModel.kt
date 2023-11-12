@@ -20,7 +20,6 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import java.io.File
 
 /** MainActivityのUI状態 */
 internal data class MainUiState(
@@ -29,7 +28,7 @@ internal data class MainUiState(
     /** ファイル監視中 */
     val monitoringNow: Boolean = false,
     /** 監視対象のディレクトリ */
-    val monitoredDir: File = File("/"),
+    val monitoredDir: String = "/",
 )
 
 /** MainActivityのビジネスロジックを扱う */
@@ -57,6 +56,6 @@ internal class MainViewModel : ViewModel() {
      * @param newValue 更新後の値
      */
     fun onMonitoredDirChange(newValue: String) {
-        _uiState.update { it.copy(monitoredDir = File(newValue)) }
+        _uiState.update { it.copy(monitoredDir = newValue) }
     }
 }

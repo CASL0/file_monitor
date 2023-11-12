@@ -22,6 +22,7 @@ import io.github.casl0.filemonitor.ui.theme.FileMonitorTheme
 import io.github.casl0.filemonitor.utils.PermissionResult
 import io.github.casl0.filemonitor.utils.askPermissions
 import kotlinx.coroutines.launch
+import java.io.File
 
 class MainActivity : ComponentActivity() {
     /** ファイル監視サービス */
@@ -47,7 +48,7 @@ class MainActivity : ComponentActivity() {
             viewModel.uiState.collect {
                 if (it.monitoringNow) {
                     fileMonitoringService?.start(
-                        it.monitoredDir,
+                        File(it.monitoredDir),
                         this@MainActivity::onFileChange,
                     )
                 } else {

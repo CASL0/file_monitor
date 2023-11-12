@@ -56,7 +56,7 @@ internal fun HomeScreen(viewModel: MainViewModel, modifier: Modifier = Modifier)
                 modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp),
-                value = uiState.monitoredDir.absolutePath,
+                value = uiState.monitoredDir,
                 onValueChange = viewModel::onMonitoredDirChange,
                 readOnly = uiState.monitoringNow,
                 label = { Text(text = stringResource(R.string.monitored)) },

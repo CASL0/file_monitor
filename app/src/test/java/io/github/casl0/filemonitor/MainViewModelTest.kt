@@ -21,7 +21,6 @@ import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test
-import java.io.File
 
 class MainViewModelTest {
 
@@ -48,9 +47,9 @@ class MainViewModelTest {
     fun onMonitoredDirChange() = runTest {
         val viewModel = MainViewModel()
 
-        assertThat(viewModel.uiState.first().monitoredDir, `is`(File("/")))
+        assertThat(viewModel.uiState.first().monitoredDir, `is`("/"))
 
         viewModel.onMonitoredDirChange("/sdcard")
-        assertThat(viewModel.uiState.first().monitoredDir, `is`(File("/sdcard")))
+        assertThat(viewModel.uiState.first().monitoredDir, `is`("/sdcard"))
     }
 }
