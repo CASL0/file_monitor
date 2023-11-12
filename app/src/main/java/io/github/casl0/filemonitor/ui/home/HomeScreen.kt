@@ -67,6 +67,7 @@ internal fun HomeScreen(
         modifier = modifier,
         topBar = {
             AppBar(
+                toggleEnable = !uiState.permissionRationale,
                 checked = uiState.monitoringNow,
                 onCheckedChange = viewModel::enableMonitoring,
             )
@@ -127,7 +128,10 @@ internal fun HomeScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AppBar(
-    checked: Boolean, onCheckedChange: (Boolean) -> Unit, modifier: Modifier = Modifier,
+    toggleEnable: Boolean,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     TopAppBar(
         title = {
@@ -135,7 +139,7 @@ private fun AppBar(
         },
         modifier = modifier,
         actions = {
-            Toggle(checked = checked, onCheckedChange = onCheckedChange)
+            Toggle(enable = toggleEnable, checked = checked, onCheckedChange = onCheckedChange)
         }
     )
 }
@@ -143,9 +147,13 @@ private fun AppBar(
 /** AppBarのトグル */
 @Composable
 private fun Toggle(
-    checked: Boolean, onCheckedChange: (Boolean) -> Unit, modifier: Modifier = Modifier,
+    enable: Boolean,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Switch(
+        enabled = enable,
         checked = checked,
         onCheckedChange = onCheckedChange,
         colors = SwitchDefaults.colors(
@@ -173,7 +181,7 @@ private fun Toggle(
 @Composable
 private fun TogglePreview() {
     FileMonitorTheme {
-        Toggle(checked = true, onCheckedChange = {})
+        Toggle(enable = true, checked = true, onCheckedChange = {})
     }
 }
 
@@ -181,6 +189,6 @@ private fun TogglePreview() {
 @Composable
 private fun AppBarPreview() {
     FileMonitorTheme {
-        AppBar(checked = false, onCheckedChange = {})
+        AppBar(toggleEnable = true, checked = false, onCheckedChange = {})
     }
 }
